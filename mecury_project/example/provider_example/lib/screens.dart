@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider_example/order_provider.dart';
-import 'counter_model.dart';
-import 'color_model.dart';
-import 'goods_model.dart';
+import 'model/counter_model.dart';
+import 'model/color_model.dart';
+import 'model/goods_model.dart';
+import 'model_impl/goods_list_model_impl.dart';
+import 'providers/selector_update_page_provider.dart';
 
 class FirstScreen extends StatelessWidget {
   @override
@@ -148,104 +149,62 @@ class SecondScreen extends StatelessWidget {
   }
 }
 
-class GoodsListScreen extends StatelessWidget {
+class GoodsListScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GoodsListProvider(),
-      child: Scaffold(
-        body: Selector<GoodsListProvider, GoodsListProvider>(
-          shouldRebuild: (pre, next) => pre.shouldRebuild,
-          selector: (context, provider) => provider,
-          builder: (context, provider, child) {
-            provider.rebuild();
-            return ListView.builder(
-              itemCount: provider.total,
-              itemBuilder: (context, index) {
-                return Selector<GoodsListProvider, Goods>(
-                  selector: (context, provider) => provider.goodsList[index],
-                  builder: (context, data, child) {
-                    print(('No.${index + 1} rebuild'));
-
-                    return ListTile(
-                      title: Text(data.goodsName),
-                      trailing: GestureDetector(
-                        onTap: () => provider.collect(index),
-                        child: Icon(
-                            data.isCollection ? Icons.star : Icons.star_border),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          },
-        ),
-        floatingActionButton: Consumer<GoodsListProvider>(
-          builder: (context, GoodsListProvider model, child) {
-            return FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                model.addAll();
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
+  _GoodsListScreenState createState() => _GoodsListScreenState();
 }
 
-
-class OrderListScreen extends StatefulWidget {
-  @override
-  _OrderListScreenState createState() => _OrderListScreenState();
-}
-
-class _OrderListScreenState extends State<OrderListScreen> {
-  OrderProvider _provider = OrderProvider();
+class _GoodsListScreenState extends State<GoodsListScreen> {
+  SelectorUpdatePageProvider _provider = SelectorUpdatePageProvider();
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _provider,
-      child: Scaffold(
-        body: Selector<OrderProvider, List<Order>>(
-          selector: (context, provider) => provider.orderList,
-          builder: (context, provider, child) {
-            return ListView.builder(
-              itemCount: _provider.listSize,
-              itemBuilder: (context, index) {
-                return Selector<OrderProvider, Order>(
-                  selector: (context, provider) => provider.orderList[index],
-                  builder: (context, data, child) {
-                    print(('No.${index + 1} rebuild'));
-
-                    return ListTile(
-                      title: Text(data.goodsName),
-                      trailing: GestureDetector(
-                        onTap: () => _provider.collect(index),
-                        child: Icon(
-                            data.isCollection ? Icons.star : Icons.star_border),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          },
-        ),
-        floatingActionButton: Consumer<OrderProvider>(
-          builder: (context, OrderProvider provider, child) {
-            return FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                provider.addAll();
-              },
-            );
-          },
-        ),
-      ),
+    print(_provider is GoodsListModel);
+    return ChangeNotifierProvider<GoodsListModelImpl>.value(value: _provider,
+    child: Builder(builder: (context){
+      var model = Provider.of<GoodsListModelImpl>(context);
+      return Text(model.listSize.toString());
+    },),
     );
+//    return ChangeNotifierProvider.value(
+//      value: _provider,
+//      child: Scaffold(
+//        body: Selector<GoodsListModel, List<Goods>>(
+//          selector: (context, provider) => provider.goodsList,
+//          builder: (context, provider, child) {
+//            return ListView.builder(
+//              itemCount: _provider.listSize,
+//              itemBuilder: (context, index) {
+//                return Selector<GoodsListModel, Goods>(
+//                  selector: (context, provider) => provider.goodsList[index],
+//                  builder: (context, data, child) {
+//                    print(('No.${index + 1} rebuild'));
+//
+//                    return ListTile(
+//                      title: Text(data.goodsName),
+//                      trailing: GestureDetector(
+//                        onTap: () => _provider.collect(index),
+//                        child: Icon(
+//                            data.isCollection ? Icons.star : Icons.star_border),
+//                      ),
+//                    );
+//                  },
+//                );
+//              },
+//            );
+//          },
+//        ),
+//        floatingActionButton: Consumer<GoodsListModel>(
+//          builder: (context, GoodsListModel provider, child) {
+//            return FloatingActionButton(
+//              child: Icon(Icons.add),
+//              onPressed: () {
+//                provider.addAll();
+//              },
+//            );
+//          },
+//        ),
+//      ),
+//    );
   }
 }
