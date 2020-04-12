@@ -4,7 +4,7 @@ import 'package:provider_example/model_impl/goods_list_model_impl.dart';
 import '../model/goods_model.dart';
 import '../model_impl/counter_model_impl.dart';
 
-class SelectorUpdatePageProvider with GoodsListModel, ChangeNotifier implements GoodsListModelImpl{
+class SelectorUpdatePageProvider with GoodsListModel, ChangeNotifier{
   @override
   void collect(int index) {
     super.collect(index);
