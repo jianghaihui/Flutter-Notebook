@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../model_impl/color_model_impl.dart';
 
-class ColorModel with ChangeNotifier implements ColorModelImpl{
+class ColorModel with ChangeNotifier {
   int _seed = 0xFFFF9000;
   Color _color = Color(0xFFFF9000);
 

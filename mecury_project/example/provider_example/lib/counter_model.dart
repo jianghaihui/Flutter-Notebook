@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model_impl/counter_model_impl.dart';
-
-class CounterModel with ChangeNotifier implements CounterModelImpl{
+class CounterModel with ChangeNotifier {
   int _count = 0;
   int get value => _count;
 
