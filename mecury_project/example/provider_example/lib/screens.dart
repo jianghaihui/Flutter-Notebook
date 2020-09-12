@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'counter_model.dart';
+import 'package:provider_example/order_provider.dart';
+
 import 'color_model.dart';
+import 'counter_model.dart';
 import 'goods_model.dart';
 
 class FirstScreen extends StatelessWidget {
@@ -186,6 +188,61 @@ class GoodsListScreen extends StatelessWidget {
               child: Icon(Icons.add),
               onPressed: () {
                 model.addAll();
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class OrderListScreen extends StatefulWidget {
+  @override
+  _OrderListScreenState createState() => _OrderListScreenState();
+}
+
+class _OrderListScreenState extends State<OrderListScreen> {
+  OrderProvider _provider = OrderProvider();
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: _provider,
+      child: Scaffold(
+        body: Selector<OrderProvider, List<Order>>(
+          selector: (BuildContext _, OrderProvider provider) =>
+              provider.orderList,
+          builder: (BuildContext _, List<Order> orderList, Widget __) {
+            return ListView.builder(
+              itemCount: _provider.listSize,
+              itemBuilder: (context, index) {
+                return Selector<OrderProvider, Order>(
+                  selector: (BuildContext _, OrderProvider provider) =>
+                      provider.orderList[index],
+                  builder: (BuildContext _, Order data, Widget __) {
+                    print(('No.${index + 1} rebuild'));
+
+                    return ListTile(
+                      title: Text(data.goodsName),
+                      trailing: GestureDetector(
+                        onTap: () => _provider.collect(index),
+                        child: Icon(
+                            data.isCollection ? Icons.star : Icons.star_border),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
+        floatingActionButton: Consumer<OrderProvider>(
+          builder: (BuildContext _, OrderProvider provider, Widget __) {
+            return FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () {
+                provider.addAll();
               },
             );
           },
